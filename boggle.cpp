@@ -100,18 +100,26 @@ bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>
 	}
 
 	word.push_back(board[r][c]);
-	//add and check current leter
 	
-	if( !prefix.count(word)) {
-		return false;
+	bool isWord   = dict.count(word) != 0;
+	bool isPrefix = prefix.count(word) != 0;
+	
+	//nothing will work here so false
+	if (!isWord && !isPrefix) {
+        return false;
+    }
+	
+	bool longerExists = false;
+	//found prefix but maybe longer can beb used instead hence this seach from a step forward
+	if (isPrefix) {
+		longerExists = boggleHelper(dict, prefix, board, word, result, static_cast<unsigned int>(r + dr), static_cast<unsigned int> (c + dc), dr, dc);
 	}
-	//I need to check a step further to see if there is a lonmger preix
-	bool longerExists = boggleHelper(dict, prefix, board, word, result, static_cast<unsigned int>(r + dr), static_cast<unsigned int> (c + dc), dr, dc);
+	//this is the longest a prefix can be
+	if (!longerExists && isWord) {
+        result.insert(word);
+        return true;
+    }
 
-	if (!longerExists && dict.count(word)) {
-			result.insert(word);
-			return true;
-		}
 	return longerExists;
 }
 
