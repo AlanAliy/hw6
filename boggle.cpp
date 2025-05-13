@@ -91,9 +91,42 @@ std::set<std::string> boggle(const std::set<std::string>& dict, const std::set<s
 	return result;
 }
 
+
 bool boggleHelper(const std::set<std::string>& dict, const std::set<std::string>& prefix, const std::vector<std::vector<char> >& board, 
 								   std::string word, std::set<std::string>& result, unsigned int r, unsigned int c, int dr, int dc)
 {
-//add your solution here!
+	if (!boundsChecker(board,r, c)) {
+		return false;
+	}
 
+	word.push_back(board[r][c]);
+	//add and check current leter
+	
+	if( !prefix.count(word)) {
+		return false;
+	}
+	//I need to check a step further to see if there is a lonmger preix
+	bool longerExists = boggleHelper(dict, prefix, board, word, result, static_cast<unsigned int>(r + dr), static_cast<unsigned int> (c + dc), dr, dc);
+
+	if (!longerExists && dict.count(word)) {
+			result.insert(word);
+			return true;
+		}
+	return longerExists;
+}
+
+
+
+//this might work badly bc of overflow maybe fund another way. if you change into signed you can again cause overflow since you only have half the values
+//for a humongous bogle
+
+bool boundsChecker(const std::vector<std::vector<char> >& board,
+					unsigned int& r, 
+					unsigned int& c)
+{
+	size_t boardSize = board.size();
+	if (r >= boardSize || c >= boardSize) { //0 is fine anything lower will overflow
+		return false;
+	}
+	return true;
 }
